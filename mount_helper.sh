@@ -117,7 +117,7 @@ if [ "$TYPE_FS" = "cifs" ]; then
     echo
 
     sudo \
-        mount -t cifs \
+        mount.cifs \
             -o $RORW,username=${REMOTE_USER},password=${REMOTE_PASS},uid=${MNT_UID},gid=${MNT_GID} \
             //${SERVER}/${SHARE} \
             ${MOUNT_POINT} || exit 1
