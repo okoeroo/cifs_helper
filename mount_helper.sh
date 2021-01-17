@@ -123,23 +123,19 @@ if [ "$TYPE_FS" = "cifs" ]; then
             ${MOUNT_POINT} || exit 1
 
 elif [ "$TYPE_FS" = "dav" ]; then
-mount -t davfs 
-    -o uid=otto,gid=users,mode=775 
-    https://asciigirl.com/webdav 
-    /mount/site
 
-    echo -n "Mounting ${WEBDAV_URL}"
+    echo -n "Mounting ${WEBDAV_URL} "
     echo -n "as ${REMOTE_USER} "
     echo -n "to ${MOUNT_POINT} "
     echo -n "for uid=$(id -u)($(id -un)) "
     echo -n "gid=$(id -g)($(id -gn))"
     echo
 
-    echo ${REMOTE_PASS} | \
+    echo "${REMOTE_PASS}" | \
     sudo \
         mount -t davfs \
             -o $RORW,username=${REMOTE_USER},uid=${MNT_UID},gid=${MNT_GID} \
-            //${SERVER}/${SHARE} \
+            ${WEBDAV_URL} \
             ${MOUNT_POINT} || exit 1
 fi
 
