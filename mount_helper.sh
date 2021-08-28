@@ -49,12 +49,26 @@ fi
 echo -n "User: "
 read REMOTE_USER
 
-echo -n "Password: "
-stty -echo
-# printf "Password: "
-read REMOTE_PASS
-stty echo
-echo
+
+# Generate the password file for this endpoint
+GEN_PASSWD_FILE="$HOME/.${SERVER}.${SHARE}.${REMOTE_USER}.cifs"
+
+if [ -f "${GEN_PASSWD_FILE}" ]; then
+	echo "Found password file: ${GEN_PASSWD_FILE}"
+	REMOTE_PASS=$(cat "${GEN_PASSWD_FILE}")
+
+else
+	echo -n "Password: "
+	stty -echo
+	# printf "Password: "
+	read REMOTE_PASS
+	stty echo
+	echo
+fi
+
+# Store password
+export PASSWD="${REMOTE_PASS}"
+
 
 echo -n "Accept mounting user. "
 echo -n "=> "
@@ -116,9 +130,18 @@ if [ "$TYPE_FS" = "cifs" ]; then
     echo -n "gid=$(id -g)($(id -gn))"
     echo
 
+#    sudo \
+#        mount.cifs \
+#            -o $RORW,username=${REMOTE_USER},password=${REMOTE_PASS},uid=${MNT_UID},gid=${MNT_GID} \
+#            //${SERVER}/${SHARE} \
+#            ${MOUNT_POINT} || exit 1
+
+    # PASSWD contains CIFS password
+
     sudo \
+	--preserve-env \
         mount.cifs \
-            -o $RORW,username=${REMOTE_USER},password=${REMOTE_PASS},uid=${MNT_UID},gid=${MNT_GID} \
+            -o $RORW,username=${REMOTE_USER},uid=${MNT_UID},gid=${MNT_GID} \
             //${SERVER}/${SHARE} \
             ${MOUNT_POINT} || exit 1
 
