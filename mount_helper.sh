@@ -2,6 +2,13 @@
 
 ROOT_MEDIA="/media"
 
+# Test tooling
+if [ ! -f "/sbin/mount.cifs" ]; then
+    echo "Could not find mount.cifs, consider: sudo apt install cifs-utils"
+    exit 1
+fi
+
+
 echo "Samba or WebDAV"
 echo "1. Samba / CIFS"
 echo "2. WebDAV"
@@ -139,7 +146,7 @@ if [ "$TYPE_FS" = "cifs" ]; then
     # PASSWD contains CIFS password
 
     sudo \
-	--preserve-env \
+        --preserve-env \
         mount.cifs \
             -o $RORW,username=${REMOTE_USER},uid=${MNT_UID},gid=${MNT_GID} \
             //${SERVER}/${SHARE} \
