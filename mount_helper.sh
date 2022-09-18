@@ -255,7 +255,8 @@ if [ "$TYPE_FS" = "cifs" ]; then
     sudo \
         --preserve-env \
         mount.cifs \
-            -o $RORW,username=${REMOTE_USER},uid=${MNT_UID},gid=${MNT_GID},vers=3.0 \
+            -v \
+            -o $RORW,username=${REMOTE_USER},uid=${MNT_UID},gid=${MNT_GID} \
             //${SERVER}/${SHARE} \
             ${MOUNT_POINT} || exit 1
 
