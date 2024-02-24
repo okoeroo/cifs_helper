@@ -88,12 +88,16 @@ fi
 
 # usage
 
+IP_TO_SERVER=$(dig $SERVER | grep -v ';' | grep -v CNAME | grep A | awk '{print $5}')
+
+
 if [ ! -z $VERBOSE ]; then
     echo "# Input from parameters:"
     echo "TYPE of network mount:    $TYPE_FS"
     echo "Remote username:          $REMOTE_USER"
     echo "Remote password:          $REMOTE_PASS"
     echo "Server host:              $SERVER"
+    echo "Server IP:                $IP_TO_SERVER"
     echo "Share name:               $SHARE"
     echo "Read-only of Read-Write:  $RORW"
     echo "##"
@@ -211,6 +215,10 @@ if [ -z $RORW ]; then
     echo
 fi
 
+
+IP_TO_SERVER=$(dig $SERVER | grep -v ';' | grep -v CNAME | grep A | awk '{print $5}')
+
+
 sync
 
 if [ $(id -u) != 0 ]; then
@@ -237,7 +245,7 @@ fi
 #Mounting
 if [ "$TYPE_FS" = "cifs" ]; then
 
-    echo -n "Mounting //${SERVER}/${SHARE} "
+    echo -n "Mounting ($SERVER) at //${IP_TO_SERVER}/${SHARE} "
     echo -n "as ${REMOTE_USER} "
     echo -n "to ${MOUNT_POINT} "
     echo -n "for uid=$(id -u)($(id -un)) "
@@ -257,7 +265,7 @@ if [ "$TYPE_FS" = "cifs" ]; then
         mount.cifs \
             -v \
             -o $RORW,username=${REMOTE_USER},uid=${MNT_UID},gid=${MNT_GID} \
-            //${SERVER}/${SHARE} \
+            //${IP_TO_SERVER}/${SHARE} \
             ${MOUNT_POINT} || exit 1
 
 elif [ "$TYPE_FS" = "dav" ]; then
